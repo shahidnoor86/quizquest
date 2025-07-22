@@ -22,22 +22,25 @@ const fetchDataFromDB = async () => {
 export async function GET(req: NextRequest) {
     
     try {
-        console.log("Quiz Category API called");
+        console.log("Quiz Category API called", req.body);
 
         const data = await fetchDataFromDB();
         console.log("Received data: ", data);
 
         return NextResponse.json(data, { status: 200 });
-    } catch (error: any) {
-        console.error("ERROR: ", error.message);
+    } catch (error: unknown) {
+        
+        if (error instanceof Error) {
+            console.error("ERROR: ", error.message);
         return NextResponse.json(
             {
                 status: 500,
                 message:
-                    error?.response?.data?.message || error.message || "An unexpected error occurred.",
+                    error.message || "An unexpected error occurred.",
             },
             { status: 500 }
         );
+    }
     }
 }
 
