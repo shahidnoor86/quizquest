@@ -3,7 +3,7 @@ interface CategoryPageProps {
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-const { slug } = await params; // ✅ await params
+const { slug } = params;
   return (
     <div>
       <h1 className="text-2xl font-bold capitalize">{slug} Quiz</h1>
