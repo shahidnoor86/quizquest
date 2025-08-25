@@ -1,7 +1,31 @@
-import pool from "@/utils/postgres";
+// import pool from "@/utils/postgres";
 import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from '@prisma/client';
 
-const fetchDataFromDB = async () => {
+const prisma = new PrismaClient();
+
+export async function GET() {
+    try {
+        console.log("Call to GET QUIZ CATEGORIES API");
+        let quizCategories = await prisma.quiz_categories.findMany();
+        console.log("QUIZ CATEGORY LIST is ", quizCategories);
+        return NextResponse.json(quizCategories);
+    } catch (error: unknown) {
+
+        if (error instanceof Error) {
+            console.error("ERROR: ", error.message);
+            return NextResponse.json(
+                {
+                    status: 500,
+                    message:
+                        error.message || "An unexpected error occurred.",
+                }
+            );
+        }
+    }
+}
+
+/* const fetchDataFromDB = async () => {
   try {
     const client = await pool.connect();
     console.log("Connected to Database");
@@ -16,20 +40,23 @@ const fetchDataFromDB = async () => {
     console.log("Error fetching data...", err);
     throw err;
   }
-}
+} */
 
 // Get All Quiz Category
-export async function GET(req: NextRequest) {
+/* export async function GET(req: NextRequest) {
     
     try {
         console.log("Quiz Category API called", req.body);
 
-        const data = await fetchDataFromDB();
+        // const data = await fetchDataFromDB();
+        const data = await prisma.user.findMany();
         console.log("Received data: ", data);
+        return NextResponse.json(data);
+        
 
         return NextResponse.json(data, { status: 200 });
     } catch (error: unknown) {
-        
+
         if (error instanceof Error) {
             console.error("ERROR: ", error.message);
         return NextResponse.json(
@@ -42,7 +69,7 @@ export async function GET(req: NextRequest) {
         );
     }
     }
-}
+} */
 
 // API Route to add a new feature
 /* export async function POST(req: NextRequest) {

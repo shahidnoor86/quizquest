@@ -1,48 +1,25 @@
-'use client'
+"use client"
 
 import axios from "axios";
-import Image from "next/image";
 import { useEffect, useState } from "react";
-// import pool from "../utils/postgres";
-
-/* const fetchDataFromDB = async () => {
-  try {
-    const client = await pool.connect();
-    console.log("Connected to Database");
-
-    const result = await client.query("SELECT * FROM quiz_categories");
-    const data = result.rows;
-    console.log("Fetched Data: ", data);
-
-    client.release();
-    return data;
-  } catch(err) {
-    console.log("Error fetching data...", err);
-    throw err;
-  }
-} */
-
-/* fetchDataFromDB()
-  .then(data => {
-    console.log("Received data: ", data);
-  })
-  .catch(err => {
-    console.log("Error: ", err);
-  }); */
+import Banner from "./components/banner";
+import CategoryCard from "./components/categorycard";
 
 export interface QuizCategory {
   id: number;
   name: string;
+  image: string;
+  slug: string;
 }
 
 export default function Home() {
-  const [quizCategory, setQuizCategory] = useState<QuizCategory[]>([]);
+  const [quizzes, setQuizzes] = useState<QuizCategory[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get<QuizCategory[]>('/api/quizcategory');
         
-        setQuizCategory(response.data);
+        setQuizzes(response.data);
 
         console.log("Data: ", response?.data);
       } catch (error) {
@@ -54,31 +31,38 @@ export default function Home() {
     fetchData();
   }, []);
   
-  const openQuizzes = async (catId: number) => {
-    // `${featureURL}?id=${id}`
-    try {
-        const response = await axios.get<QuizCategory[]>(`/api/quizzes?categoryId=${catId}`);
-        
-        setQuizCategory(response.data);
-
-        console.log("Data: ", response?.data);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-        // setLoading(false);
-      }
-  }
-
   return (
-    <div className="font-sans flex items-center justify-center w-full min-h-screen">
-      <ul className="space-y-2 items-center">
-        {quizCategory.map((category) => (
-          <li key={category.id} className="p-4 border rounded-lg shadow-sm" onClick={() => openQuizzes(category.id)}>
-            <div className="flex justify-between items-center">
-              <span>{category.name}</span>
-            </div>
-          </li>
+    <div className="w-full max-w-7xl mx-auto px-4 py-8">
+      <Banner />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {quizzes.length === 0 && (
+          <div className="col-span-full text-center text-gray-500">
+            No quizzes available at the moment.
+          </div>
+        )}
+        {quizzes.map((quiz) => (
+          <CategoryCard
+            key={quiz.id}
+            title={quiz.name}
+            image={quiz.image}
+            slug={quiz.slug}
+          />
         ))}
-      </ul>
+      </div>
     </div>
   );
+ /*  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center -mt-16">
+      <h1 className="text-4xl font-bold mb-8 font-[family-name:var(--font-geist-sans)] text-[#333333]">
+        Superblog
+      </h1>
+      <ol className="list-decimal list-inside font-[family-name:var(--font-geist-sans)]">
+        {quizzes.map((user: QuizCategory) => (
+          <li key={user.id} className="mb-2">
+            {user.name}
+          </li>
+        ))}
+      </ol>
+    </div>
+  ); */
 }
