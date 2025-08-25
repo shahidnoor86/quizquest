@@ -1,5 +1,5 @@
 // import pool from "@/utils/postgres";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export async function GET() {
     try {
         console.log("Call to GET QUIZ CATEGORIES API");
-        let quizCategories = await prisma.quiz_categories.findMany();
+        const quizCategories = await prisma.quiz_categories.findMany();
         console.log("QUIZ CATEGORY LIST is ", quizCategories);
         return NextResponse.json(quizCategories);
     } catch (error: unknown) {
